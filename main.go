@@ -6,12 +6,24 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/amirashouri/postings/views"
 )
 
 func main() {
 	router := http.NewServeMux()
+
 	fileServer := http.FileServer(http.Dir("public"))
+
 	router.Handle("/public/*", http.StripPrefix("/public/", fileServer))
+	// Move this to the router and handler package
+	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		c := views.Index()
+		err := c.Render(r.Context(), w)
+		if err != nil {
+			http.Error(w, "Error rendering home template", http.StatusInternalServerError)
+		}
+	})
 
 	killSig := make(chan os.Signal, 1)
 
