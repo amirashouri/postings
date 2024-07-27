@@ -2,56 +2,80 @@ package main
 
 import (
 	"context"
-	"log/slog"
-	"net/http"
 	"os"
-	"postings/views"
 	"time"
+
+	"log/slog"
+
+	"main/api"
+	db "main/db/sqlc"
+	"main/util"
+
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
-	router := http.NewServeMux()
+	config, err := util.LoadConfig(".")
+	if err != nil {
+		slog.Error("Can not load config")
+	}
 
-	fileServer := http.FileServer(http.Dir("public"))
+	if config.Environment == "development" {
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	}
 
-	router.Handle("/public/*", http.StripPrefix("/public/", fileServer))
-	// Move this to the router and handler package
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		c := views.Index()
-		err := c.Render(r.Context(), w)
-		if err != nil {
-			http.Error(w, "Error rendering home template", http.StatusInternalServerError)
-		}
-	})
+	connPool, err := pgxpool.New(context.Background(), config.DBSource)
+	if err != nil {
+		log.Fatal().Err(err).Msg("can not connect to the db")
+	}
+
+	runDBMigration(config.MigrationURL, config.DBSource)
+
+	store := db.NewStore(connPool)
+
+	server, err := api.NewServer(config, store)
+	if err != nil {
+		log.Fatal().Err(err).Msg("cannot create server")
+	}
 
 	killSig := make(chan os.Signal, 1)
 
-	server := &http.Server{
-		Addr:    ":3000",
-		Handler: router,
-	}
-
 	go func() {
-		err := server.ListenAndServe()
-		if err != nil {
-			slog.Error("server error", slog.Any("err", err))
-		}
+		server.Start(config.HTTPServerAddress)
 	}()
 
-	slog.Info("Server started...")
+	log.Debug().Msg("Server started...")
 	<-killSig
-
-	slog.Info("Shutting down server")
+	log.Debug().Msg("Server shut down...")
 
 	// Create a context with a timeout for shutdown
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	// Attempt to gracefully shut down the server
-	if err := server.Shutdown(ctx); err != nil {
-		slog.Error("Server shutdown failed", slog.Any("err", err))
+	if err := server.Service.Shutdown(ctx); err != nil {
+		log.Fatal().Msg("Server shutdown failed")
 		os.Exit(1)
 	}
 
-	slog.Info("Server shutdown complete")
+	log.Debug().Msg("Server shutdown complete")
+}
+
+func runDBMigration(migrationURL string, dbSource string) {
+	migration, err := migrate.New(migrationURL, dbSource)
+	if err != nil {
+		log.Fatal().Err(err).Msg("cannot create new migrate instance")
+	}
+
+	if err = migration.Up(); err != nil && err != migrate.ErrNoChange {
+		log.Fatal().Err(err).Msg("failed to run migrate up")
+	}
+
+	log.Info().Msg("db migrated successfully")
 }

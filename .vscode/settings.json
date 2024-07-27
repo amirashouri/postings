@@ -3,9 +3,12 @@
         "amirashouri",
         "DBTX",
         "jackc",
+        "mapstructure",
         "pgconn",
         "pgtype",
+        "pgxpool",
         "sqlc",
-        "Timestamptz"
+        "Timestamptz",
+        "zerolog"
     ]
 }
