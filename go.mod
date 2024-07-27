@@ -1,4 +1,4 @@
-module github.com/amirashouri/postings
+module main
 
 go 1.22.3
 

@@ -3,11 +3,10 @@ package main
 import (
 	"context"
 	"log/slog"
+	"main/views"
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/amirashouri/postings/views"
 )
 
 func main() {
