@@ -1,6 +1,11 @@
 {
     "cSpell.words": [
         "amirashouri",
-        "sqlc"
+        "DBTX",
+        "jackc",
+        "pgconn",
+        "pgtype",
+        "sqlc",
+        "Timestamptz"
     ]
 }

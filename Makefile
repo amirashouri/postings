@@ -12,6 +12,9 @@ createdb:
 dropdb:
 	docker exec -it postgres dropdb postings
 
+sqlc:
+	sqlc generate
+
 migrateup:
 	migrate -path db/migration -database "$(DB_URL)" -verbose up
 
@@ -24,4 +27,4 @@ migratedown:
 migratedown1:
 	migrate -path db/migration -database "$(DB_URL)" -verbose down 1
 
-.PHONY: network postgres createdb dropdb migrateup migrateup1 migratedown migratedown1
+.PHONY: network postgres createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc

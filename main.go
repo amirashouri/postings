@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"log/slog"
-	"main/views"
 	"net/http"
 	"os"
+	"postings/views"
 	"time"
 )
 
