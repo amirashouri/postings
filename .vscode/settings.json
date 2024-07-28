@@ -10,6 +10,7 @@
         "pgtype",
         "pgxpool",
         "sqlc",
+        "tailwindcss",
         "Timestamptz",
         "zerolog"
     ]
