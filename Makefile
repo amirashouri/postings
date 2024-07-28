@@ -27,4 +27,21 @@ migratedown:
 migratedown1:
 	migrate -path db/migration -database "$(DB_URL)" -verbose down 1
 
-.PHONY: network postgres createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc
+tailwind-watch:
+	./tailwindcss -i ./public/css/input.css -o ./public/css/style.css --watch
+
+templ-generate:
+	templ generate
+
+tailwind-build:
+	./tailwindcss -i ./public/css/input.css -o ./public/css/style.min.css --minify
+
+templ-watch:
+	templ generate --watch
+
+tailwindcss-exec:
+	curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-macos-arm64
+	chmod +x tailwindcss-macos-arm64
+	mv tailwindcss-macos-arm64 tailwindcss
+
+.PHONY: network postgres createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc tailwind-watch templ-generate templ-watch tailwindcss-exec tailwind-build

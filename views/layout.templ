@@ -1,0 +1,24 @@
+package views
+
+templ header(title string) {
+    <head>
+        <title>{ title }</title>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		// <link rel="icon" href="public/resources/code-solid.png" sizes="32x32"/>
+		<script src="public/script/htmx.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="public/css/style.min.css"/>
+    </head>
+}
+
+templ Layout(contents templ.Component, title string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		@header(title)
+		<body class="flex flex-col h-screen">
+			<main class="flex-1 container mb-auto">
+				@contents
+			</main>
+		</body>
+	</html>
+}

@@ -9,6 +9,7 @@ FROM alpine:3.20
 WORKDIR /app
 COPY --from=builder /app/main .
 COPY app.env .
+Copy public public
 COPY start.sh .
 COPY wait-for.sh .
 COPY db/migration ./db/migration
