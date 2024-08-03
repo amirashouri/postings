@@ -7,6 +7,7 @@ CREATE TABLE "follows" (
 CREATE TABLE "users" (
   "id" bigserial PRIMARY KEY,
   "email" varchar UNIQUE NOT NULL,
+  "hashed_password" varchar NOT NULL,
   "username" varchar NOT NULL,
   "role" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now())

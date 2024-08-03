@@ -1,50 +1,73 @@
 package api
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 
 	db "main/db/sqlc"
+	"main/token"
 	"main/util"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
-	config  util.Config
-	store   db.Store
-	router  *http.ServeMux
-	Service *http.Server
+	config     util.Config
+	store      db.Store
+	tokenMaker token.Maker
+	router     *gin.Engine
+	mux        *http.Server
 }
 
 // NewServer creates a new HTTP server
 func NewServer(config util.Config, store db.Store) (*Server, error) {
-	server := &Server{
-		config: config,
-		store:  store,
+	tokenMaker, err := token.NewJWTMaker(config.TokenSymmetricKey)
+	if err != nil {
+		return nil, fmt.Errorf("con not create token maker: %w", err)
 	}
 
-	server.setupRouter()
+	server := &Server{
+		config:     config,
+		store:      store,
+		tokenMaker: tokenMaker,
+	}
+
+	server.setupRouter(config.HTTPServerAddress)
 	return server, nil
 }
 
-func (server *Server) setupRouter() {
-	router := http.NewServeMux()
+func (server *Server) setupRouter(address string) {
+	router := gin.Default()
 
-	fileServer := http.FileServer(http.Dir("public"))
+	router.Static("/public", "./public")
 
-	router.Handle("/public/*", http.StripPrefix("/public/", fileServer))
+	router.GET("/", server.signup)
+	router.POST("/users", server.createUser)
+	router.POST("/users/login", server.login)
+	router.GET("/users/signup", server.signup)
 
-	router.HandleFunc("/", server.createUser)
+	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
+	authRoutes.GET("/posts", nil)
 
-	router.HandleFunc("POST /users", server.createUser)
+	mux := &http.Server{
+		Addr:    address,
+		Handler: router.Handler(),
+	}
 
 	server.router = router
+	server.mux = mux
 }
 
 // Start runs the HTTP server on a specific address.
-func (server *Server) Start(address string) error {
-	service := &http.Server{
-		Addr:    address,
-		Handler: server.router,
-	}
-	server.Service = service
-	return service.ListenAndServe()
+func (server *Server) Start() error {
+	return server.mux.ListenAndServe()
+}
+
+func (server *Server) Shutdown(ctx context.Context) error {
+	return server.mux.Shutdown(ctx)
+}
+
+func errorResponse(err error) gin.H {
+	return gin.H{"error": err.Error()}
 }

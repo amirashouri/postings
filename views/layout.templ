@@ -1,6 +1,6 @@
 package views
 
-import "fmt"
+// import "fmt"
 
 templ header(title string) {
     <head>
@@ -37,21 +37,22 @@ templ Nav(s MenuState) {
 templ NavMenuList(s MenuState) {
 	if (s.IsAuthenticated) {
 		<div role="none" class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:border-gray-700">
-			@MenuItem(HOME_TAB, s.SelectedPage)
-			@MenuItem(ABOUT_TAB, s.SelectedPage)
-			@MenuItem(CONTACT_TAB, s.SelectedPage)
-			@MenuItem(PROJECTS_TAB, s.SelectedPage)
+			@MenuItem(HOME_TAB, s.SelectedPage, "/users/login")
+			@MenuItem(ABOUT_TAB, s.SelectedPage, "/users/login")
+			@MenuItem(CONTACT_TAB, s.SelectedPage, "/users/login")
+			@MenuItem(PROJECTS_TAB, s.SelectedPage, "/users/login")
 		</div>
 	} else {
 		<div role="none" class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:border-gray-700">
-			@MenuItem(LOGIN_TAB, s.SelectedPage)
-			@MenuItem(SIGNUP_TAB, s.SelectedPage)
+			@MenuItem(LOGIN_TAB, s.SelectedPage, "/users/login")
+			@MenuItem(SIGNUP_TAB, s.SelectedPage, "/users/signup")
 		</div>
 	}
 } 
 
-templ MenuItem(item string, selectedItem string) {
-	<a href={ templ.URL(fmt.Sprintf("/%v", item)) } class={ "block", "py-2", "px-3", "text-gray-900", "rounded", "hover:bg-green-100", "md:hover:bg-transparent", "md:border-0", "md:hover:text-blue-700", "md:p-0", templ.KV("md:dark:text-green-100", item == selectedItem), templ.KV("dark:text-white", item != selectedItem), "md:dark:hover:text-green-100", "dark:hover:bg-green-100", "dark:hover:text-white", "md:dark:hover:bg-transparent" }>{ item }</a>
+templ MenuItem(item string, selectedItem string, path string) {
+	// <a href={ templ.URL(fmt.Sprintf("/%v", item)) } class={ "block", "py-2", "px-3", "text-gray-900", "rounded", "hover:bg-green-100", "md:hover:bg-transparent", "md:border-0", "md:hover:text-blue-700", "md:p-0", templ.KV("md:dark:text-green-100", item == selectedItem), templ.KV("dark:text-white", item != selectedItem), "md:dark:hover:text-green-100", "dark:hover:bg-green-100", "dark:hover:text-white", "md:dark:hover:bg-transparent" }>{ item }</a>
+	<button hx-get={path} class={ "block", "py-2", "px-3", "text-gray-900", "rounded", "hover:bg-green-100", "md:hover:bg-transparent", "md:border-0", "md:hover:text-blue-700", "md:p-0", templ.KV("md:dark:text-green-100", item == selectedItem), templ.KV("dark:text-white", item != selectedItem), "md:dark:hover:text-green-100", "dark:hover:bg-green-100", "dark:hover:text-white", "md:dark:hover:bg-transparent" }>{ item }</button>
 }
 
 templ Layout(contents templ.Component, title string, selectedTab string, isAuthenticated bool) {

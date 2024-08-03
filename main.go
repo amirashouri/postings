@@ -47,7 +47,7 @@ func main() {
 	killSig := make(chan os.Signal, 1)
 
 	go func() {
-		server.Start(config.HTTPServerAddress)
+		server.Start()
 	}()
 
 	log.Debug().Msg("Server started...")
@@ -59,7 +59,7 @@ func main() {
 	defer cancel()
 
 	// Attempt to gracefully shut down the server
-	if err := server.Service.Shutdown(ctx); err != nil {
+	if err := server.Shutdown(ctx); err != nil {
 		log.Fatal().Msg("Server shutdown failed")
 		os.Exit(1)
 	}

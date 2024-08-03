@@ -36,9 +36,10 @@ type Post struct {
 }
 
 type User struct {
-	ID        int64              `json:"id"`
-	Email     string             `json:"email"`
-	Username  string             `json:"username"`
-	Role      string             `json:"role"`
-	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	ID             int64              `json:"id"`
+	Email          string             `json:"email"`
+	HashedPassword string             `json:"hashed_password"`
+	Username       string             `json:"username"`
+	Role           string             `json:"role"`
+	CreatedAt      pgtype.Timestamptz `json:"created_at"`
 }
