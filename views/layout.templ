@@ -10,28 +10,26 @@ templ header(title string) {
 		<link rel="icon" href="public/resource/logo.jpeg" sizes="32x32"/>
 		<script src="public/script/htmx.min.js"></script>
 		<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
-        <link rel="stylesheet" type="text/css" href="public/css/style.min.css"/>
+        <link rel="stylesheet" type="text/css" href="public/css/style.css"/>
     </head>
 }
 
 templ Nav(s MenuState) {
-	<nav class="bg-white border-gray-200 dark:bg-green-800">
-		<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-			<a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-				<img src="public/resource/logo.jpeg" class="h-8 rounded-full" alt="Postings"/>
-				<span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Postings</span>
-			</a>
-			<button _="on click toggle .hidden on the next <div/>" id="menu-button" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-50 dark:hover:bg-gray-400 dark:focus:ring-gray-200" aria-expanded="true" aria-haspopup="true">
-				<span class="sr-only">Open main menu</span>
-				<svg class="w-5 h-5" aria-hidden="true" xmlns="public/resource/logo.jpeg" fill="none" viewBox="0 0 17 14">
-					<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"></path>
-				</svg>
-			</button>
-			<div class="hidden w-full md:block md:w-auto" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
-				@NavMenuList(s)
-			</div>
+	<div class="navbar bg-primary flex flex-wrap items-center justify-between mx-auto p-4">
+		<a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+			<img src="public/resource/logo.jpeg" class="h-8 rounded-full" alt="Postings"/>
+			<span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Postings</span>
+		</a>
+		<button _="on click toggle .hidden on the next <div/>" id="menu-button" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-50 dark:hover:bg-gray-400 dark:focus:ring-gray-200" aria-expanded="true" aria-haspopup="true">
+			<span class="sr-only">Open main menu</span>
+			<svg class="w-5 h-5" aria-hidden="true" xmlns="public/resource/logo.jpeg" fill="none" viewBox="0 0 17 14">
+				<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"></path>
+			</svg>
+		</button>
+		<div class="hidden w-full md:block md:w-auto" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+			@NavMenuList(s)
 		</div>
-	</nav>
+	</div>
 }
 
 templ NavMenuList(s MenuState) {
@@ -52,7 +50,7 @@ templ NavMenuList(s MenuState) {
 
 templ MenuItem(item string, selectedItem string, path string) {
 	// <a href={ templ.URL(fmt.Sprintf("/%v", item)) } class={ "block", "py-2", "px-3", "text-gray-900", "rounded", "hover:bg-green-100", "md:hover:bg-transparent", "md:border-0", "md:hover:text-blue-700", "md:p-0", templ.KV("md:dark:text-green-100", item == selectedItem), templ.KV("dark:text-white", item != selectedItem), "md:dark:hover:text-green-100", "dark:hover:bg-green-100", "dark:hover:text-white", "md:dark:hover:bg-transparent" }>{ item }</a>
-	<button hx-get={path} class={ "block", "py-2", "px-3", "text-gray-900", "rounded", "hover:bg-green-100", "md:hover:bg-transparent", "md:border-0", "md:hover:text-blue-700", "md:p-0", templ.KV("md:dark:text-green-100", item == selectedItem), templ.KV("dark:text-white", item != selectedItem), "md:dark:hover:text-green-100", "dark:hover:bg-green-100", "dark:hover:text-white", "md:dark:hover:bg-transparent" }>{ item }</button>
+	<button hx-get={path} class={ "btn-ghost", "md:p-0", templ.KV("md:dark:text-green-100", item == selectedItem), templ.KV("dark:text-white", item != selectedItem), "md:dark:hover:text-green-100", "dark:hover:bg-green-100", "dark:hover:text-white", "md:dark:hover:bg-transparent" }>{ item }</button>
 }
 
 templ Layout(contents templ.Component, title string, selectedTab string, isAuthenticated bool) {

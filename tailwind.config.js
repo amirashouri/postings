@@ -1,29 +1,29 @@
-const colors = require('tailwindcss/colors')
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     'views/*.templ',
     'views/*/*.templ',
   ],
+  daisyui: {
+    themes: [
+      {
+        myTheme: {
+          "primary": "#1b4f22",
+          "secondary": "#48d7f7",
+          "accent": "#37cdbe",
+          "neutral": "#3d4451",
+          "base-100": "#ffffff",
+        },
+      }, 
+      // "dark",
+      // "cupcake",
+    ],
+  },
   theme: {
     container: {
       center: true,
-      padding: {
-        DEFAULT: "1rem",
-        mobile: "2rem",
-        tablet: "4rem",
-        desktop: "5rem",
-      },
     },
     extend: {
-      colors: {
-        primary: colors.blue,
-        secondary: colors.yellow,
-        neutral: colors.gray,
-        green: colors.green,
-        emerald: colors.emerald,
-      },
       fontFamily: {
           sans: ['Graphik', 'sans-serif'],
           serif: ['Merriweather', 'serif'],
@@ -33,6 +33,7 @@ module.exports = {
   plugins: [
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
+    require('daisyui'),
   ],
 }
 
