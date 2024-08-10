@@ -50,7 +50,7 @@ templ NavMenuList(s MenuState) {
 
 templ MenuItem(item string, selectedItem string, path string) {
 	// <a href={ templ.URL(fmt.Sprintf("/%v", item)) } class={ "block", "py-2", "px-3", "text-gray-900", "rounded", "hover:bg-green-100", "md:hover:bg-transparent", "md:border-0", "md:hover:text-blue-700", "md:p-0", templ.KV("md:dark:text-green-100", item == selectedItem), templ.KV("dark:text-white", item != selectedItem), "md:dark:hover:text-green-100", "dark:hover:bg-green-100", "dark:hover:text-white", "md:dark:hover:bg-transparent" }>{ item }</a>
-	<button hx-get={path} class={ "btn-ghost", "md:p-0", templ.KV("md:dark:text-green-100", item == selectedItem), templ.KV("dark:text-white", item != selectedItem), "md:dark:hover:text-green-100", "dark:hover:bg-green-100", "dark:hover:text-white", "md:dark:hover:bg-transparent" }>{ item }</button>
+	<button hx-target="body" hx-get={path} class={ "btn-ghost", "md:p-0", templ.KV("md:dark:text-green-100", item == selectedItem), templ.KV("dark:text-white", item != selectedItem), "md:dark:hover:text-green-100", "dark:hover:bg-green-100", "dark:hover:text-white", "md:dark:hover:bg-transparent" }>{ item }</button>
 }
 
 templ Layout(contents templ.Component, title string, selectedTab string, isAuthenticated bool) {

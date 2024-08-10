@@ -12,7 +12,7 @@ import (
 )
 
 func (server *Server) signup(ctx *gin.Context) {
-	c := views.Signup()
+	c := views.Signup("amirashouri72@gmail.com", "", "")
 	err := views.Layout(c, "Postings", views.SIGNUP_TAB, false).Render(ctx, ctx.Writer)
 	if err != nil {
 		http.Error(ctx.Writer, "Error rendering home template", http.StatusInternalServerError)
@@ -20,9 +20,18 @@ func (server *Server) signup(ctx *gin.Context) {
 }
 
 func (server *Server) createUser(ctx *gin.Context) {
-	email := ctx.Request.Form.Get("email")
-	password := ctx.Request.Form.Get("password")
-	username := ctx.Request.Form.Get("username")
+	email := ctx.Request.FormValue("email")
+	password := ctx.Request.FormValue("password")
+	username := ctx.Request.FormValue("username")
+
+	if email == "" || password == "" || username == "" {
+		c := views.Signup(email, username, "Please fill all the fields")
+		err := views.Layout(c, "Postings", views.HOME_TAB, false).Render(ctx, ctx.Writer)
+		if err != nil {
+			http.Error(ctx.Writer, "Error rendering home template", http.StatusInternalServerError)
+		}
+		return
+	}
 
 	hashedPassword, err := util.HashPassword(password)
 	if err != nil {

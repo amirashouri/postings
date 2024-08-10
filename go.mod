@@ -64,6 +64,6 @@ require (
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/viper v1.19.0
-	golang.org/x/crypto v0.23.0 // indirect
+	golang.org/x/crypto v0.23.0
 	golang.org/x/text v0.15.0 // indirect
 )
