@@ -7,6 +7,7 @@ const (
 	PROJECTS_TAB = "projects"
 	LOGIN_TAB    = "login"
 	SIGNUP_TAB   = "signup"
+	POSTS_TAB    = "posts"
 )
 
 type MenuState struct {

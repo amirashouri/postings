@@ -7,9 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (server *Server) indexHandler(ctx *gin.Context) {
-	c := views.Index(true)
-	err := views.Layout(c, "Postings", views.HOME_TAB, true).Render(ctx, ctx.Writer)
+func (server *Server) getPosts(ctx *gin.Context) {
+	c := views.Posts()
+	err := views.Layout(c, "Postings", views.POSTS_TAB, false).Render(ctx, ctx.Writer)
 	if err != nil {
 		http.Error(ctx.Writer, "Error rendering home template", http.StatusInternalServerError)
 	}

@@ -1,7 +1,13 @@
 package views
 
-templ Index() {
-    <div>
-        This is a CRUD app
-    </div>
+templ Index(loggedIn bool) {
+    if loggedIn {
+        <div>
+            You are logged in
+        </div>
+    } else {
+        <div>
+            Please login or signup
+        </div>
+    }
 }

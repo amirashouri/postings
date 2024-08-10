@@ -42,14 +42,15 @@ func (server *Server) setupRouter(address string) {
 
 	router.Static("/public", "./public")
 
-	router.GET("/", server.indexHandler)
+	//router.GET("/", server.indexHandler)
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.login)
 	router.GET("/users/login", server.getLogin)
 	router.GET("/users/signup", server.signup)
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
-	authRoutes.GET("/posts", nil)
+	authRoutes.GET("/posts", server.getPosts)
+	authRoutes.GET("/", server.indexHandler)
 
 	mux := &http.Server{
 		Addr:    address,

@@ -57,7 +57,7 @@ func (server *Server) createUser(ctx *gin.Context) {
 		return
 	}
 
-	c := views.Index()
+	c := views.Index(false)
 	err = views.Layout(c, "Postings", views.HOME_TAB, false).Render(ctx, ctx.Writer)
 	if err != nil {
 		http.Error(ctx.Writer, "Error rendering home template", http.StatusInternalServerError)
@@ -112,9 +112,9 @@ func (server *Server) login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.SetCookie(server.config.AccessTokenCookieName, accessToken, -1, "/", "", true, true)
-	c := views.Index()
-	err = views.Layout(c, "Postings", views.HOME_TAB, false).Render(ctx, ctx.Writer)
+	ctx.SetCookie(server.config.AccessTokenCookieName, accessToken, 3600, "/", "0.0.0.0", false, true)
+	c := views.Posts()
+	err = views.Layout(c, "Postings", views.HOME_TAB, true).Render(ctx, ctx.Writer)
 	if err != nil {
 		http.Error(ctx.Writer, "Error rendering home template", http.StatusInternalServerError)
 	}

@@ -2,11 +2,10 @@ package api
 
 import (
 	"errors"
-	"fmt"
 	"main/token"
+	"main/views"
 
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,35 +19,36 @@ const (
 // AuthMiddleware creates a http middleware for authorization
 func authMiddleware(tokenMaker token.Maker) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		authorizationHeader := ctx.GetHeader(authorizationHeaderKey)
+		accessToken, err := ctx.Cookie("access-token")
+		if err != nil {
+			redirect(ctx)
+			err = errors.New("authorization header can not be found")
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err))
+			return
+		}
 
-		if len(authorizationHeader) == 0 {
+		if len(accessToken) == 0 {
+			redirect(ctx)
 			err := errors.New("authorization header is not provided")
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err))
 			return
 		}
 
-		fields := strings.Fields(authorizationHeader)
-		if len(fields) < 2 {
-			err := errors.New("invalid authorization header format")
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err))
-			return
-		}
-
-		authorizationType := strings.ToLower(fields[0])
-		if authorizationType != authorizationTypeBearer {
-			err := fmt.Errorf("unsupported authorization type %s", authorizationType)
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err))
-			return
-		}
-
-		accessToken := fields[1]
 		payload, err := tokenMaker.VerifyToken(accessToken)
 		if err != nil {
+			redirect(ctx)
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err))
 			return
 		}
 		ctx.Set(authorizationPayloadKey, payload)
 		ctx.Next()
+	}
+}
+
+func redirect(ctx *gin.Context) {
+	c := views.Index(false)
+	err := views.Layout(c, "Postings", views.HOME_TAB, false).Render(ctx, ctx.Writer)
+	if err != nil {
+		http.Error(ctx.Writer, "Error rendering home template", http.StatusInternalServerError)
 	}
 }
