@@ -64,9 +64,26 @@ func (server *Server) createUser(ctx *gin.Context) {
 	}
 }
 
+func (server *Server) getLogin(ctx *gin.Context) {
+	c := views.Login("", "")
+	err := views.Layout(c, "Postings", views.LOGIN_TAB, false).Render(ctx, ctx.Writer)
+	if err != nil {
+		http.Error(ctx.Writer, "Error rendering home template", http.StatusInternalServerError)
+	}
+}
+
 func (server *Server) login(ctx *gin.Context) {
-	email := ctx.Request.Form.Get("email")
-	password := ctx.Request.Form.Get("password")
+	email := ctx.Request.FormValue("email")
+	password := ctx.Request.FormValue("password")
+
+	if email == "" || password == "" {
+		c := views.Login(email, "Please fill all the fields")
+		err := views.Layout(c, "Postings", views.LOGIN_TAB, false).Render(ctx, ctx.Writer)
+		if err != nil {
+			http.Error(ctx.Writer, "Error rendering home template", http.StatusInternalServerError)
+		}
+		return
+	}
 
 	user, err := server.store.GetUserByEmail(ctx, email)
 	if err != nil {

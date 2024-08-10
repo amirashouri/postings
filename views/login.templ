@@ -1,8 +1,8 @@
 package views
 
-templ Signup(email string, username string, errorMessage string) {
-	<div class="flex place-content-center py-4">
-		<form hx-target="body" hx-post="/users" hx-trigger="submit" class="w-full max-w-lg" autocomplete="on">
+templ Login(email string, errorMessage string) {
+    <div class="flex place-content-center py-4">
+		<form hx-target="body" hx-post="/users/login" hx-trigger="submit" class="w-full max-w-lg" autocomplete="on">
 			<div class="grid-cols-1 mb-6">
 				<label class="input input-bordered flex items-center gap-2 mb-3">
 					<svg
@@ -16,17 +16,6 @@ templ Signup(email string, username string, errorMessage string) {
 						d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
 					</svg>
 					<input type="text" class="grow border-none focus:ring-0" name="email" placeholder="Email" if (email != "") {value={email}}/>
-				</label>
-				<label class="input input-bordered flex items-center gap-2 mb-3">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 16 16"
-						fill="currentColor"
-						class="h-4 w-4 opacity-70">
-						<path
-						d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
-					</svg>
-					<input type="text" class="grow border-none focus:ring-0" name="username" placeholder="Username" if (username != "") {value={username}}/>
 				</label>
                 <label class="input input-bordered flex items-center gap-2 mb-3">
 					<svg
@@ -47,17 +36,5 @@ templ Signup(email string, username string, errorMessage string) {
 				<button class="btn btn-primary btn-wide" type="submit">Submit</button>
 			</div>
 		</form>
-	</div>
-}
-
-templ SuccessfulMessage() {
-	<div class="bg-green-100 border-t-4 border-green-500 rounded-b text-green-900 px-4 py-3 shadow-md" role="alert">
-		<div class="flex">
-			<div class="py-1"><svg class="fill-current h-6 w-6 text-green-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"></path></svg></div>
-			<div>
-				<p class="font-bold">Your submission was successful</p>
-				<p class="text-sm">I'l get to you as soon as possible.</p>
-			</div>
-		</div>
 	</div>
 }
