@@ -1,9 +1,11 @@
 -- name: CreatePost :one
 INSERT INTO posts (
     title,
-    body
+    body,
+    user_id,
+    status
 ) VALUES (
-    $1, $2
+    $1, $2, $3, $4
 ) RETURNING *;
 
 -- name: GetPost :one

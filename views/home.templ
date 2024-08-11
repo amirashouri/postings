@@ -1,0 +1,16 @@
+package views
+
+import (
+    "main/db/sqlc"
+)
+
+templ Home(items []db.Post, loggedIn bool) {
+    <div class="flex place-content-center py-4">
+        <div class="grid-cols-1 mb-6 posts">
+        for _, item := range items {
+            @Post(item.Title, item.Body)
+        }
+        @CreatePost("", "", "")
+        </div>
+    </div>
+}

@@ -1,13 +1,7 @@
 package views
 
-templ Index(loggedIn bool) {
-    if loggedIn {
-        <div>
-            You are logged in
-        </div>
-    } else {
-        <div>
-            Please login or signup
-        </div>
-    }
+templ Index() {
+    <div>
+        Please <span>login</span> or <span>signup</span>
+    </div>
 }
