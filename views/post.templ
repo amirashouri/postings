@@ -1,12 +1,43 @@
 package views
 
-templ Post(title string, body string) {
-    <div class="card bg-base-100 shadow-xl">
+import (
+    "main/db/sqlc"
+    "fmt"
+)
+
+templ Post(post db.Post) {
+    <div class="card bg-base-100 mb-4 shadow-xl post">
         <div class="card-body">
-            <h2 class="card-title">{title}</h2>
-            <p>{body}</p>
-            <div class="card-actions justify-end">
-                <button class="btn btn-primary">Buy Now</button>
+            <h2 class="card-title">{post.Title}</h2>
+            <h4 class="text-slate-600">{post.Body}</h4>
+            <div class="col-row card-actions justify-between">
+                <button class="btn bg-transparent border-none hover:bg-red-400">
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path 
+                            stroke="#ff0000" 
+                            stroke-linecap="round" 
+                            stroke-linejoin="round" 
+                            stroke-width="2"
+                            d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"
+                        />
+                    </svg>
+                </button>
+                <button 
+                    class="btn bg-transparent border-none bg-red-600"
+                    hx-delete={fmt.Sprintf("posts/%v", post.ID)}
+                    hx-swap="delete"
+                    hx-target=".post"
+                    >
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path 
+                            stroke="currentColor" 
+                            stroke-linecap="round" 
+                            stroke-linejoin="round"
+                            fill="#000000"
+                            stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"
+                        />
+                    </svg>
+                </button>
             </div>
         </div>
     </div>

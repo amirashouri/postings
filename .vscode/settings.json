@@ -16,5 +16,6 @@
         "Timestamptz",
         "verr",
         "zerolog"
-    ]
+    ],
+    "makefile.configureOnOpen": true
 }

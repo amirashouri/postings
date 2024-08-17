@@ -51,6 +51,7 @@ func (server *Server) setupRouter(address string) {
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 	authRoutes.GET("/posts", server.getPosts)
 	authRoutes.POST("/posts", server.createPost)
+	authRoutes.DELETE("/posts/:id", server.deletePost)
 	authRoutes.GET("/home", server.homeHandler)
 
 	mux := &http.Server{
