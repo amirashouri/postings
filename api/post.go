@@ -4,6 +4,7 @@ import (
 	db "main/db/sqlc"
 	"main/token"
 	"main/views"
+	"main/views/model"
 	"net/http"
 	"strconv"
 
@@ -33,10 +34,11 @@ func (server *Server) createPost(ctx *gin.Context) {
 	params := db.CreatePostParams{Title: title, Body: body, UserID: authPayload.UserId, Status: ""}
 	post, err := server.store.CreatePost(ctx, params)
 	if err != nil {
-		log.Err(err).Msg("Server started...")
+		log.Err(err).Msg("Failed to create post")
 		http.Error(ctx.Writer, "Error Failed to create a post", http.StatusInternalServerError)
 	}
-	c := views.Post(post)
+	postItem := model.PostItem{Post: post, LikesCount: 0, IsLiked: false}
+	c := views.Post(postItem)
 	err = c.Render(ctx, ctx.Writer)
 	if err != nil {
 		http.Error(ctx.Writer, "Error rendering post template", http.StatusInternalServerError)
@@ -56,5 +58,25 @@ func (server *Server) deletePost(ctx *gin.Context) {
 	err = templ.NopComponent.Render(ctx, ctx.Writer)
 	if err != nil {
 		http.Error(ctx.Writer, "Error rendering home template", http.StatusInternalServerError)
+	}
+}
+
+func (server *Server) likePost(ctx *gin.Context) {
+	// TODO: Fix unlike case and counter update
+	idString := ctx.Param("id")
+	postId, err := strconv.ParseInt(idString, 10, 64)
+	if err != nil {
+		http.Error(ctx.Writer, "Should provide an id", http.StatusBadRequest)
+	}
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	likeParam := db.CreateLikeParams{UserID: authPayload.UserId, PostID: postId}
+	err = server.store.CreateLike(ctx, likeParam)
+	if err != nil {
+		http.Error(ctx.Writer, "failed to create like", http.StatusBadRequest)
+	}
+	c := views.LikeButton(postId, true)
+	err = c.Render(ctx, ctx.Writer)
+	if err != nil {
+		http.Error(ctx.Writer, "Error rendering like button template", http.StatusInternalServerError)
 	}
 }

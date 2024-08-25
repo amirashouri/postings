@@ -1,10 +1,10 @@
 package views
 
 import (
-    "main/db/sqlc"
+    "main/views/model"
 )
 
-templ Home(items []db.Post, loggedIn bool) {
+templ Home(items []model.PostItem, loggedIn bool) {
     <div class="flex place-content-center py-4">
         <div class="grid grid-cols-1 flex-1 mb-6">
         <div class="posts">

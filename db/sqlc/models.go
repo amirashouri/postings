@@ -26,6 +26,14 @@ type Follow struct {
 	CreatedAt       pgtype.Timestamptz `json:"created_at"`
 }
 
+type Like struct {
+	ID        int64            `json:"id"`
+	UserID    int64            `json:"user_id"`
+	PostID    int64            `json:"post_id"`
+	CreatedAt time.Time        `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+}
+
 type Post struct {
 	ID    int64  `json:"id"`
 	Title string `json:"title"`

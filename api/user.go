@@ -6,6 +6,7 @@ import (
 	db "main/db/sqlc"
 	"main/util"
 	"main/views"
+	"main/views/model"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -57,7 +58,7 @@ func (server *Server) createUser(ctx *gin.Context) {
 		return
 	}
 
-	c := views.Home(make([]db.Post, 0), false)
+	c := views.Home(make([]model.PostItem, 0), false)
 	err = views.Layout(c, "Postings", views.HOME_TAB, false).Render(ctx, ctx.Writer)
 	if err != nil {
 		http.Error(ctx.Writer, "Error rendering home template", http.StatusInternalServerError)

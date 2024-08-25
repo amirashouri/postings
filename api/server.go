@@ -52,6 +52,7 @@ func (server *Server) setupRouter(address string) {
 	authRoutes.GET("/posts", server.getPosts)
 	authRoutes.POST("/posts", server.createPost)
 	authRoutes.DELETE("/posts/:id", server.deletePost)
+	authRoutes.POST("/posts/like/:id", server.likePost)
 	authRoutes.GET("/home", server.homeHandler)
 
 	mux := &http.Server{

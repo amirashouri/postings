@@ -10,13 +10,16 @@ import (
 
 type Querier interface {
 	CreateComment(ctx context.Context, text string) (Comment, error)
+	CreateLike(ctx context.Context, arg CreateLikeParams) error
 	CreatePost(ctx context.Context, arg CreatePostParams) (Post, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteComment(ctx context.Context, id int64) error
+	DeleteLike(ctx context.Context, id int64) error
 	DeletePost(ctx context.Context, id int64) error
 	DeleteUser(ctx context.Context, id int64) error
 	GetComment(ctx context.Context, id int64) (Comment, error)
 	GetComments(ctx context.Context, arg GetCommentsParams) ([]Comment, error)
+	GetLikes(ctx context.Context, postID int64) ([]Like, error)
 	GetPost(ctx context.Context, id int64) (Post, error)
 	GetPosts(ctx context.Context, arg GetPostsParams) ([]Post, error)
 	GetUser(ctx context.Context, id int64) (User, error)
