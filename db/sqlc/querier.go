@@ -19,6 +19,7 @@ type Querier interface {
 	DeleteUser(ctx context.Context, id int64) error
 	GetComment(ctx context.Context, id int64) (Comment, error)
 	GetComments(ctx context.Context, arg GetCommentsParams) ([]Comment, error)
+	GetLikeByUser(ctx context.Context, arg GetLikeByUserParams) (Like, error)
 	GetLikes(ctx context.Context, postID int64) ([]Like, error)
 	GetPost(ctx context.Context, id int64) (Post, error)
 	GetPosts(ctx context.Context, arg GetPostsParams) ([]Post, error)

@@ -5,14 +5,14 @@ import (
 )
 
 templ Home(items []model.PostItem, loggedIn bool) {
-    <div class="flex place-content-center py-4">
-        <div class="grid grid-cols-1 flex-1 mb-6">
-        <div class="posts">
-            for _, item := range items {
-            @Post(item)
-        }
-        </div>
-        @CreatePost("", "", "")
+    <div class="flex place-content-center py-4 home">
+        <div class="grid grid-cols-1 flex-1 mb-6 home-posts">
+            <div class="posts">
+                for _, item := range items {
+                    @Post(item)
+                }
+            </div>
+            @CreatePost("", "", "")
         </div>
     </div>
 }

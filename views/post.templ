@@ -6,18 +6,22 @@ import (
 )
 
 templ Post(item model.PostItem) {
-    <div class="card bg-base-100 mb-4 shadow-xl post">
+    <div 
+        hx-get={fmt.Sprintf("/posts/%v", item.Post.ID)} 
+        hx-target=".home-posts"
+        hx-trigger={fmt.Sprintf("click from:#post_%v", item.Post.ID)}
+        hx-push-url="false" 
+        hx-swap="show:none"
+        id={fmt.Sprintf("post_%v", item.Post.ID)}
+        class="card bg-base-100 mb-4 shadow-xl post">
         <div class="card-body">
             <h2 class="card-title">{item.Post.Title}</h2>
             <h4 class="text-slate-600">{item.Post.Body}</h4>
             <div class="col-row card-actions justify-between">
-                <div class="col-row card-actions items-center">
-                    <h4>{fmt.Sprint(item.LikesCount)}</h4>
-                    @LikeButton(item.Post.ID, item.IsLiked)
-                </div>
+                @LikeButton(item, item.IsLiked)
                 <button 
                     class="btn bg-transparent border-none bg-red-600"
-                    hx-delete={fmt.Sprintf("posts/%v", item.Post.ID)}
+                    hx-delete={fmt.Sprintf("/posts/%v", item.Post.ID)}
                     hx-swap="delete"
                     hx-target=".post"
                     >

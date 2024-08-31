@@ -50,6 +50,7 @@ func (server *Server) setupRouter(address string) {
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 	authRoutes.GET("/posts", server.getPosts)
+	authRoutes.GET("/posts/:id", server.getPost)
 	authRoutes.POST("/posts", server.createPost)
 	authRoutes.DELETE("/posts/:id", server.deletePost)
 	authRoutes.POST("/posts/like/:id", server.likePost)

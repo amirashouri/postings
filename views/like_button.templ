@@ -1,32 +1,41 @@
 package views
 
-import ("fmt")
+import (
+    "fmt"
+    "main/views/model"
+)
 
-templ LikeButton(postId int64, liked bool) {
-    <button 
-        class="btn bg-transparent border-none hover:bg-red-400"
-        hx-post={fmt.Sprintf("posts/like/%v", postId)}
-        hx-swap="outerHTML"
-        >
-        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none">
-        if liked {
-            <path 
-                stroke="#ff0000" 
-                stroke-linecap="round" 
-                stroke-linejoin="round" 
-                stroke-width="2"
-                fill="#ff0000"
-                d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"
-            />
-        }else {
-            <path 
-                stroke="#ff0000" 
-                stroke-linecap="round" 
-                stroke-linejoin="round" 
-                stroke-width="2"
-                d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"
-            />
-        }
-        </svg>
-    </button>
+templ LikeButton(item model.PostItem, liked bool) {
+    <div id={fmt.Sprintf("like_row_%v", item.Post.ID)}  class="col-row card-actions items-center">
+        <h4>{fmt.Sprint(item.LikesCount)}</h4>
+        <button 
+            id={fmt.Sprintf("like_button_%v", item.Post.ID)}
+            class="btn bg-transparent border-none hover:bg-red-400"
+            hx-post={fmt.Sprintf("/posts/like/%v", item.Post.ID)}
+            hx-trigger={fmt.Sprintf("click consume:#like_button_%v", item.Post.ID)}
+            hx-target={fmt.Sprintf("#like_row_%v", item.Post.ID)}
+            hx-swap="outerHTML"
+            >
+            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none">
+            if liked {
+                <path 
+                    stroke="#ff0000" 
+                    stroke-linecap="round" 
+                    stroke-linejoin="round" 
+                    stroke-width="2"
+                    fill="#ff0000"
+                    d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"
+                />
+            }else {
+                <path 
+                    stroke="#ff0000" 
+                    stroke-linecap="round" 
+                    stroke-linejoin="round" 
+                    stroke-width="2"
+                    d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"
+                />
+            }
+            </svg>
+        </button>
+    </div>
 }

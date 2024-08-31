@@ -21,6 +21,24 @@ func (server *Server) getPosts(ctx *gin.Context) {
 	}
 }
 
+func (server *Server) getPost(ctx *gin.Context) {
+	idString := ctx.Param("id")
+	id, err := strconv.ParseInt(idString, 10, 64)
+	if err != nil {
+		http.Error(ctx.Writer, "Should provide an id", http.StatusBadRequest)
+	}
+
+	postItem, err := createPostItem(server, ctx, id)
+	if err != nil {
+		http.Error(ctx.Writer, "failed to create post Item", http.StatusBadRequest)
+	}
+	c := views.Post(postItem)
+	err = c.Render(ctx, ctx.Writer)
+	if err != nil {
+		http.Error(ctx.Writer, "Error rendering home template", http.StatusInternalServerError)
+	}
+}
+
 func (server *Server) createPost(ctx *gin.Context) {
 	title := ctx.Request.FormValue("title")
 	body := ctx.Request.FormValue("body")
@@ -69,14 +87,53 @@ func (server *Server) likePost(ctx *gin.Context) {
 		http.Error(ctx.Writer, "Should provide an id", http.StatusBadRequest)
 	}
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
-	likeParam := db.CreateLikeParams{UserID: authPayload.UserId, PostID: postId}
-	err = server.store.CreateLike(ctx, likeParam)
+
+	param := db.GetLikeByUserParams{UserID: authPayload.UserId, PostID: postId}
+	like, notFound := server.store.GetLikeByUser(ctx, param)
+
+	if notFound != nil {
+		likeParam := db.CreateLikeParams{UserID: authPayload.UserId, PostID: postId}
+		err = server.store.CreateLike(ctx, likeParam)
+	} else {
+		err = server.store.DeleteLike(ctx, like.ID)
+	}
 	if err != nil {
 		http.Error(ctx.Writer, "failed to create like", http.StatusBadRequest)
 	}
-	c := views.LikeButton(postId, true)
+
+	postItem, err := createPostItem(server, ctx, postId)
+	if err != nil {
+		http.Error(ctx.Writer, "failed to create post Item", http.StatusBadRequest)
+	}
+	c := views.LikeButton(postItem, notFound != nil)
 	err = c.Render(ctx, ctx.Writer)
 	if err != nil {
 		http.Error(ctx.Writer, "Error rendering like button template", http.StatusInternalServerError)
 	}
+}
+
+func containsUserIdInLikes(s []db.Like, id int64) (int64, bool) {
+	for _, a := range s {
+		if a.UserID == id {
+			return a.ID, true
+		}
+	}
+	return 0, false
+}
+
+func createPostItem(server *Server, ctx *gin.Context, postId int64) (model.PostItem, error) {
+	post, err := server.store.GetPost(ctx, postId)
+	if err != nil {
+		return model.PostItem{}, err
+	}
+	liked, err := server.store.GetLikes(ctx, postId)
+	if err != nil {
+		return model.PostItem{}, err
+	}
+
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	_, isLiked := containsUserIdInLikes(liked, authPayload.UserId)
+
+	postItem := model.PostItem{Post: post, LikesCount: len(liked), IsLiked: isLiked}
+	return postItem, nil
 }

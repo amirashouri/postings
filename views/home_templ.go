@@ -30,7 +30,7 @@ func Home(items []model.PostItem, loggedIn bool) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex place-content-center py-4\"><div class=\"grid grid-cols-1 flex-1 mb-6\"><div class=\"posts\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex place-content-center py-4 home\"><div class=\"grid grid-cols-1 flex-1 mb-6 home-posts\"><div class=\"posts\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
