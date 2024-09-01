@@ -15,12 +15,25 @@ templ Post(item model.PostItem) {
         id={fmt.Sprintf("post_%v", item.Post.ID)}
         class="card bg-base-100 mb-4 shadow-xl post">
         <div class="card-body">
+            <div class="col-row card-actions">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path 
+                        stroke="currentColor"
+                        stroke-linecap="round" 
+                        stroke-linejoin="round" 
+                        stroke-width="2"
+                        fill="#000000"
+                        d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                    />
+                </svg>
+                <h4 class="text-slate-600">{item.UserName}</h4>
+            </div>
             <h2 class="card-title">{item.Post.Title}</h2>
             <h4 class="text-slate-600">{item.Post.Body}</h4>
             <div class="col-row card-actions justify-between">
                 @LikeButton(item, item.IsLiked)
                 <button 
-                    class="btn bg-transparent border-none bg-red-600"
+                    class={"btn", "bg-transparent", "border-none", "bg-red-600", templ.KV("hidden", !item.ShowDelete)}
                     hx-delete={fmt.Sprintf("/posts/%v", item.Post.ID)}
                     hx-swap="delete"
                     hx-target=".post"

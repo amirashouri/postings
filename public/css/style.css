@@ -1993,6 +1993,10 @@ html {
   width: 100%;
 }
 
+.w-8 {
+  width: 2rem;
+}
+
 .max-w-lg {
   max-width: 32rem;
 }

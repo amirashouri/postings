@@ -2,11 +2,13 @@ package api
 
 import (
 	db "main/db/sqlc"
+	"main/token"
 	"main/views"
 	"main/views/model"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 func (server *Server) indexHandler(ctx *gin.Context) {
@@ -23,25 +25,21 @@ func (server *Server) homeHandler(ctx *gin.Context) {
 	if err != nil {
 		http.Error(ctx.Writer, "Error fetching user posts", http.StatusInternalServerError)
 	}
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	var postItems []model.PostItem
 	for i := 0; i < len(posts); i++ {
-		likes, _ := server.store.GetLikes(ctx, posts[i].ID)
-		isLiked := contains(likes, posts[i].ID)
-		postItem := model.PostItem{Post: posts[i], LikesCount: len(likes), IsLiked: isLiked}
+
+		post := posts[i]
+		postItem, err := createPostItem(server, ctx, post.ID, authPayload.UserId)
+		if err != nil {
+			http.Error(ctx.Writer, "Failed to create a post", http.StatusInternalServerError)
+		}
 		postItems = append(postItems, postItem)
 	}
 	c := views.Home(postItems, true)
 	err = views.Layout(c, "Postings", views.HOME_TAB, true).Render(ctx, ctx.Writer)
 	if err != nil {
+		log.Err(err).Msg("Failed to fetch posts")
 		http.Error(ctx.Writer, "Error rendering home template", http.StatusInternalServerError)
 	}
-}
-
-func contains(s []db.Like, id int64) bool {
-	for _, a := range s {
-		if a.PostID == id {
-			return true
-		}
-	}
-	return false
 }

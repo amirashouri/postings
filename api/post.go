@@ -28,7 +28,8 @@ func (server *Server) getPost(ctx *gin.Context) {
 		http.Error(ctx.Writer, "Should provide an id", http.StatusBadRequest)
 	}
 
-	postItem, err := createPostItem(server, ctx, id)
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	postItem, err := createPostItem(server, ctx, id, authPayload.UserId)
 	if err != nil {
 		http.Error(ctx.Writer, "failed to create post Item", http.StatusBadRequest)
 	}
@@ -55,7 +56,10 @@ func (server *Server) createPost(ctx *gin.Context) {
 		log.Err(err).Msg("Failed to create post")
 		http.Error(ctx.Writer, "Error Failed to create a post", http.StatusInternalServerError)
 	}
-	postItem := model.PostItem{Post: post, LikesCount: 0, IsLiked: false}
+	postItem, err := createPostItem(server, ctx, post.ID, authPayload.UserId)
+	if err != nil {
+		http.Error(ctx.Writer, "Failed to create a post item", http.StatusInternalServerError)
+	}
 	c := views.Post(postItem)
 	err = c.Render(ctx, ctx.Writer)
 	if err != nil {
@@ -101,7 +105,7 @@ func (server *Server) likePost(ctx *gin.Context) {
 		http.Error(ctx.Writer, "failed to create like", http.StatusBadRequest)
 	}
 
-	postItem, err := createPostItem(server, ctx, postId)
+	postItem, err := createPostItem(server, ctx, postId, authPayload.UserId)
 	if err != nil {
 		http.Error(ctx.Writer, "failed to create post Item", http.StatusBadRequest)
 	}
@@ -121,12 +125,18 @@ func containsUserIdInLikes(s []db.Like, id int64) (int64, bool) {
 	return 0, false
 }
 
-func createPostItem(server *Server, ctx *gin.Context, postId int64) (model.PostItem, error) {
+func createPostItem(server *Server, ctx *gin.Context, postId int64, userId int64) (model.PostItem, error) {
 	post, err := server.store.GetPost(ctx, postId)
 	if err != nil {
 		return model.PostItem{}, err
 	}
+
 	liked, err := server.store.GetLikes(ctx, postId)
+	if err != nil {
+		return model.PostItem{}, err
+	}
+
+	user, err := server.store.GetUser(ctx, post.UserID)
 	if err != nil {
 		return model.PostItem{}, err
 	}
@@ -134,6 +144,6 @@ func createPostItem(server *Server, ctx *gin.Context, postId int64) (model.PostI
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	_, isLiked := containsUserIdInLikes(liked, authPayload.UserId)
 
-	postItem := model.PostItem{Post: post, LikesCount: len(liked), IsLiked: isLiked}
+	postItem := model.PostItem{Post: post, LikesCount: len(liked), IsLiked: isLiked, UserName: user.Username, ShowDelete: post.UserID == userId}
 	return postItem, nil
 }

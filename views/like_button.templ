@@ -9,10 +9,9 @@ templ LikeButton(item model.PostItem, liked bool) {
     <div id={fmt.Sprintf("like_row_%v", item.Post.ID)}  class="col-row card-actions items-center">
         <h4>{fmt.Sprint(item.LikesCount)}</h4>
         <button 
-            id={fmt.Sprintf("like_button_%v", item.Post.ID)}
             class="btn bg-transparent border-none hover:bg-red-400"
             hx-post={fmt.Sprintf("/posts/like/%v", item.Post.ID)}
-            hx-trigger={fmt.Sprintf("click consume:#like_button_%v", item.Post.ID)}
+            hx-trigger="click consume"
             hx-target={fmt.Sprintf("#like_row_%v", item.Post.ID)}
             hx-swap="outerHTML"
             >

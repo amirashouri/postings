@@ -114,6 +114,6 @@ func (server *Server) login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.SetCookie(server.config.AccessTokenCookieName, accessToken, 3600, "/", "0.0.0.0", false, true)
+	ctx.SetCookie(server.config.AccessTokenCookieName, accessToken, int(server.config.AccessTokenDuration.Seconds()), "/", "0.0.0.0", false, true)
 	ctx.Redirect(http.StatusSeeOther, "/home")
 }
