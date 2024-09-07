@@ -13,29 +13,31 @@ import (
 )
 
 func (server *Server) indexHandler(ctx *gin.Context) {
-	accessToken, err := ctx.Cookie("access-token")
-	if err != nil {
-		goToIndex(ctx)
-		return
-	}
-	payload, err := server.tokenMaker.VerifyToken(accessToken)
-	if err != nil {
-		goToIndex(ctx)
-		return
-	}
-	if payload.ExpiredAt.After(time.Now()) {
+	ok := validateToken(server, ctx)
+	if ok {
 		ctx.Redirect(http.StatusMovedPermanently, "/home")
 		return
 	}
-	goToIndex(ctx)
-}
-
-func goToIndex(ctx *gin.Context) {
 	c := views.Index()
 	err := views.Layout(c, "Postings", views.INDEX_TAB, false).Render(ctx, ctx.Writer)
 	if err != nil {
 		http.Error(ctx.Writer, "Error rendering home template", http.StatusInternalServerError)
 	}
+}
+
+func validateToken(server *Server, ctx *gin.Context) bool {
+	accessToken, err := ctx.Cookie("access-token")
+	if err != nil {
+		return false
+	}
+	payload, err := server.tokenMaker.VerifyToken(accessToken)
+	if err != nil {
+		return false
+	}
+	if payload.ExpiredAt.After(time.Now()) {
+		return true
+	}
+	return false
 }
 
 func (server *Server) homeHandler(ctx *gin.Context) {
