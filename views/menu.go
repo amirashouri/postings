@@ -3,6 +3,7 @@ package views
 const (
 	INDEX_TAB    = "postings"
 	HOME_TAB     = "home"
+	MY_ACCOUNT   = "my account"
 	ABOUT_TAB    = "about"
 	CONTACT_TAB  = "contact"
 	PROJECTS_TAB = "projects"

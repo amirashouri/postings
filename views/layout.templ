@@ -37,9 +37,7 @@ templ NavMenuList(s MenuState) {
 	if (s.IsAuthenticated) {
 		<div role="none" class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:border-gray-700">
 			@MenuItem(HOME_TAB, s.SelectedPage, "/home")
-			@MenuItem(ABOUT_TAB, s.SelectedPage, "/about")
-			@MenuItem(CONTACT_TAB, s.SelectedPage, "/contact")
-			@MenuItem(PROJECTS_TAB, s.SelectedPage, "/project")
+			@MenuItem(MY_ACCOUNT, s.SelectedPage, "/account")
 		</div>
 	} else {
 		<div role="none" class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:border-gray-700">

@@ -6,12 +6,31 @@ import (
 	"main/views"
 	"main/views/model"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
 
 func (server *Server) indexHandler(ctx *gin.Context) {
+	accessToken, err := ctx.Cookie("access-token")
+	if err != nil {
+		goToIndex(ctx)
+		return
+	}
+	payload, err := server.tokenMaker.VerifyToken(accessToken)
+	if err != nil {
+		goToIndex(ctx)
+		return
+	}
+	if payload.ExpiredAt.After(time.Now()) {
+		ctx.Redirect(http.StatusMovedPermanently, "/home")
+		return
+	}
+	goToIndex(ctx)
+}
+
+func goToIndex(ctx *gin.Context) {
 	c := views.Index()
 	err := views.Layout(c, "Postings", views.INDEX_TAB, false).Render(ctx, ctx.Writer)
 	if err != nil {
