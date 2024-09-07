@@ -49,12 +49,12 @@ func (server *Server) setupRouter(address string) {
 	router.GET("/users/signup", server.signup)
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
-	authRoutes.GET("/posts", server.getPosts)
 	authRoutes.GET("/posts/:id", server.getPost)
 	authRoutes.POST("/posts", server.createPost)
 	authRoutes.DELETE("/posts/:id", server.deletePost)
 	authRoutes.POST("/posts/like/:id", server.likePost)
 	authRoutes.GET("/home", server.homeHandler)
+	authRoutes.GET("/account", server.getUserPosts)
 
 	mux := &http.Server{
 		Addr:    address,

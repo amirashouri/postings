@@ -13,9 +13,23 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (server *Server) getPosts(ctx *gin.Context) {
-	c := views.Posts()
-	err := views.Layout(c, "Postings", views.POSTS_TAB, false).Render(ctx, ctx.Writer)
+func (server *Server) getUserPosts(ctx *gin.Context) {
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	params := db.GetUserPostsParams{UserID: authPayload.UserId, Limit: 10, Offset: 0}
+	userPosts, err := server.store.GetUserPosts(ctx, params)
+	if err != nil {
+		http.Error(ctx.Writer, "Could not fetch user posts", http.StatusBadRequest)
+	}
+	var postItems []model.PostItem
+	for i := 0; i < len(userPosts); i++ {
+		postItem, err := createPostItem(server, ctx, userPosts[i].ID, authPayload.UserId)
+		if err != nil {
+			http.Error(ctx.Writer, "Failed to create a post", http.StatusInternalServerError)
+		}
+		postItems = append(postItems, postItem)
+	}
+	c := views.Account(postItems)
+	err = views.Layout(c, "Postings", views.MY_ACCOUNT, true).Render(ctx, ctx.Writer)
 	if err != nil {
 		http.Error(ctx.Writer, "Error rendering home template", http.StatusInternalServerError)
 	}

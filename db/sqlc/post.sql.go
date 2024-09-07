@@ -117,6 +117,48 @@ func (q *Queries) GetPosts(ctx context.Context, arg GetPostsParams) ([]Post, err
 	return items, nil
 }
 
+const getUserPosts = `-- name: GetUserPosts :many
+SELECT id, title, body, user_id, status, created_at, updated_at FROM posts
+WHERE user_id = $1
+ORDER BY id
+LIMIT $2
+OFFSET $3
+`
+
+type GetUserPostsParams struct {
+	UserID int64 `json:"user_id"`
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+func (q *Queries) GetUserPosts(ctx context.Context, arg GetUserPostsParams) ([]Post, error) {
+	rows, err := q.db.Query(ctx, getUserPosts, arg.UserID, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Post{}
+	for rows.Next() {
+		var i Post
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Body,
+			&i.UserID,
+			&i.Status,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updatePost = `-- name: UpdatePost :one
 UPDATE posts
 SET title = $2, body = $3, status = $4, updated_at = now()
